@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grocery Shop</title>
+    <script src="https://unpkg.com/alpinejs" defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+<div x-data="{
+                        groceries: [],
+                        runtime: null,
+                        newItem: { name: '', quantity: 1, category: '' },
+
+                        async init() {
+                            await this.loadGroceries();
+                            await this.loadRuntime();
+                        },
+
+                        async loadGroceries() {
+                            this.groceries = await (await fetch('/api/groceries')).json();
+                        },
+
+                        async loadRuntime() {
+                            this.runtime = await (await fetch('/api/runtime')).json();
+                        },
+
+                        async addItem() {
+                            await fetch('/api/groceries', {
+                                method: 'POST',
+                                headers: {'Content-Type': 'application/json'},
+                                body: JSON.stringify(this.newItem)
+                            });
+                            this.newItem = { name: '', quantity: 1, category: '' };
+                            await this.loadGroceries();
+                        },
+
+                        async removeItem(name) {
+                            await fetch(`/api/groceries/${name}`, { method: 'DELETE' });
+                            await this.loadGroceries();
+                        }
+                    }" class="container mx-auto p-4">
+    <h1 class="text-3xl font-bold mb-6">Grocery Shop</h1>
+
+    <div class="bg-white p-4 rounded-lg shadow mb-6">
+        <h2 class="text-xl font-semibold mb-4">Add New Item</h2>
+        <form @submit.prevent="addItem" class="space-y-4">
+            <div>
+                <input x-model="newItem.name" placeholder="Item name" class="border p-2 rounded" required>
+                <input type="number" x-model="newItem.quantity" min="1" class="border p-2 rounded" required>
+                <input x-model="newItem.category" placeholder="Category" class="border p-2 rounded" required>
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Add</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="bg-white p-4 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-4">Grocery List</h2>
+        <template x-if="groceries.length === 0">
+            <p class="text-gray-500">No items in the list</p>
+        </template>
+        <ul class="space-y-2">
+            <template x-for="item in groceries" :key="item.name">
+                <li class="flex justify-between items-center border-b py-2">
+                    <div>
+                        <span x-text="item.name" class="font-medium"></span>
+                        <span class="text-gray-500" x-text="` (${item.quantity})`"></span>
+                        <span class="text-gray-500" x-text="` - ${item.category}`"></span>
+                    </div>
+                    <button @click="removeItem(item.name)"
+                            class="bg-red-500 text-white px-3 py-1 rounded">
+                        Remove
+                    </button>
+                </li>
+            </template>
+        </ul>
+    </div>
+
+    <div x-show="runtime" class="mt-6 text-sm text-gray-500">
+        <p x-text="`Date: ${runtime?.todayDate}`"></p>
+        <p x-text="`Java Version: ${runtime?.javaVersion}`"></p>
+        <p x-text="`OS: ${runtime?.osName}`"></p>
+    </div>
+</div>
+</body>
+</html>
