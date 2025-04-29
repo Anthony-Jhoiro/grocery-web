@@ -84,6 +84,12 @@ public class Main {
         server.start(8080);
         
         System.out.println("Grocery shop server started at http://localhost:8080");
+
+        try {
+            Thread.currentThread().join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 ```
