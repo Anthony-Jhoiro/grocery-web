@@ -61,7 +61,7 @@
             <p class="text-gray-500">No items in the list</p>
         </template>
         <ul class="space-y-2">
-            <template x-for="item in groceries" :key="item.name">
+            <template x-for="item in groceries" :key="`${item.name}-${item.category}`">
                 <li class="flex justify-between items-center border-b py-2">
                     <div>
                         <span x-text="item.name" class="font-medium"></span>
