@@ -6,7 +6,7 @@
 
     <groupId>fr.anthonyquere</groupId>
     <artifactId>grocery-web</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 
     <name>Grocery Web Library</name>
     <description>A Java library for teaching purpose only</description>
